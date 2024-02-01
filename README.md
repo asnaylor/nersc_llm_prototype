@@ -4,10 +4,11 @@
 https://github.com/NVIDIA/GenerativeAIExamples/blob/main/RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu
 
 ### To-do
-- [ ] download + install scripts?
+- [x] download + install scripts?
 - [ ] Train script
 - [ ] Deploy script
 - [ ] Test script
+- [ ] Update LLM container to run as non-root
 
 
 ## How to setup
@@ -47,9 +48,6 @@ podman build --platform=linux/amd64 -f Dockerfile -t llm-inference-server:latest
 > [!NOTE]
 > When building with podman I had a build permissions issue with the pip install line. Fixed it by copying instead of mounting the `requirments.txt` file.
 
-> [!WARNING]
-> podman-hpc currently disabled on Perlmutter.
-
 
 
 
@@ -59,3 +57,11 @@ Run the script:
 ```bash
 ./deploy_rag.sh
 ```
+
+> [!NOTE]
+> Need to run on a compute node first time to generate the TensorRT engine and probably best to convert model to HF checkpoints (or download llama HF checkpoint).  
+
+
+### Step 4: Test
+
+Open up [notebook.ipynb](notebook.ipynb)

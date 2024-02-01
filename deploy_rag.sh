@@ -12,6 +12,12 @@
 # Variables
 CMD_PID_ARRAYS=()
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' #https://en.wikipedia.org/wiki/ANSI_escape_code
+
+#To-do: Add verbose switch
+
 # Load config
 source env.cfg
 
@@ -32,18 +38,20 @@ deploy_service(){
 }
 
 llm(){
-    shifter --module=gpu \
-            --volume="$MODEL_DIRECTORY:/model" \
-            --image=$LLM_SERVER_IMAGE \
-                /usr/bin/python3 -m model_server $MODEL_TYPE \
+    podman-hpc run \
+            --rm \
+            --gpu \
+            --network host \
+            --shm-size 20g \
+            --volume $MODEL_DIRECTORY:/model \
+            $LLM_SERVER_IMAGE \
+                $MODEL_TYPE \
                 --max-input-length ${MODEL_MAX_INPUT_LENGTH:-3000} \
                 --max-output-length ${MODEL_MAX_OUTPUT_LENGTH:-512} \
-                --quantization ${QUANTIZATION:-None}
+                --quantization ${QUANTIZATION:-None} \
+                -v -v
 }
 
-sleep_test(){
-    sleep 200
-}
 
 control_c(){
     echo "KeyboardInterrupt detected"
@@ -62,9 +70,7 @@ trap control_c SIGINT
 
 #Main
 main() {
-    deploy_service "LLM" llm | while IFS= read -r line; do echo "[LLM] $line"; done
-    deploy_service "Test_service2" sleep_test
-    deploy_service "Test_service3" sleep_test
+    deploy_service "LLM" llm | while IFS= read -r line; do echo -e "${RED}[LLM]${NC} $line"; done
 
     echo "All services deployed. Ctrl + C to shutdown services..."
     wait
