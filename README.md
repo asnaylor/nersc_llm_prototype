@@ -1,67 +1,26 @@
-# nersc_llm_prototype
+# NERSC Perlmutter Triton + TensorRT-LLM Demo
 
-## Nvidia RAG example
-https://github.com/NVIDIA/GenerativeAIExamples/blob/main/RetrievalAugmentedGeneration/README.md#2-qa-chatbot----a100h100l40s-gpu
+This demo uses content from this repo https://github.com/NVIDIA/GenerativeAIExamples/tree/main 
 
-### To-do
-- [x] download + install scripts?
-- [ ] Train script
-- [ ] Deploy script
-- [ ] Test script
-- [ ] Update LLM container to run as non-root
+## Setup
 
-
-## How to setup
-
-### Step 1: Download files
-
-Download nvidia repo to SCRATCH repo:
+To copy across the model files and download the container image on Perlmutter run on a login node:
 ```bash
-source env.cfg
-mkdir -p $SCRATCH_DIR && cd "$_"
-git clone git@github.com:NVIDIA/GenerativeAIExamples.git && cd GenerativeAIExamples
-git lfs pull
+./deploy.sh setup
 ```
 
-Download LLama models:
+## Deploy
+
+Once the setup is complete, start up an interactive slurm job (replacing your account):
 ```bash
-cd $SCRATCH_DIR
-git clone https://github.com/facebookresearch/llama.git
-cd llama/
-./download.sh #Select llama-2-13b-chat
-mv tokenizer* llama-2-13b-chat/
-ls llama-2-13b-chat/
-```
-Requires filling out [Llama request access form](https://ai.meta.com/resources/models-and-libraries/llama-downloads/).
-
-### Step 2: Build Services
-We have to build 3 out of the 6 services we are going to deploy.
-
-#### LLM Inference Server
-https://github.com/NVIDIA/GenerativeAIExamples/blob/main/RetrievalAugmentedGeneration/llm-inference-server/Dockerfile
-
-```bash
-cd $SCRATCH_DIR
-cd GenerativeAIExamples/RetrievalAugmentedGeneration/llm-inference-server/
-podman build --platform=linux/amd64 -f Dockerfile -t llm-inference-server:latest .
-```
-> [!NOTE]
-> When building with podman I had a build permissions issue with the pip install line. Fixed it by copying instead of mounting the `requirments.txt` file.
-
-
-
-
-### Step 3: Deploy
-
-Run the script:
-```bash
-./deploy_rag.sh
+salloc -N 1 -C gpu -G 4 --gpu-bind=closest -t 01:00:00 -q interactive -A <account>
 ```
 
-> [!NOTE]
-> Need to run on a compute node first time to generate the TensorRT engine and probably best to convert model to HF checkpoints (or download llama HF checkpoint).  
+Inside the slurm job run:
+```bash
+./deploy.sh run
+```
 
+## Connect & Test
 
-### Step 4: Test
-
-Open up [notebook.ipynb](notebook.ipynb)
+Open up [notebook.ipynb](notebook.ipynb) to connect to the LLM container and test.
