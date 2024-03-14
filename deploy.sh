@@ -17,7 +17,7 @@ script_name=$(basename "$0")
 
 # Define functions
 function print_run {
-    # print the function and then ru
+    # print the function and then run
     if [[ "$verbose" = true ]]; then
         echo "$@"
     fi
@@ -64,6 +64,7 @@ shift $((OPTIND-1))
 # Check for remaining arguments
 if [ $# -eq 0 ]; then
   echo "Error: Please provide at least one argument."
+  help
   exit 1
 fi
 
