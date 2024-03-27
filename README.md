@@ -37,14 +37,32 @@ python -m nersc_llm tgi --hf_home $SCRATCH/huggingface --hf_token <HF_TOKEN> --m
 
 Example curl:
 ```bash
-curl 127.0.0.1:9090/generate \
+curl $ADDRESS:9090/generate \
     -X POST \
-    -d '{"inputs":"How can i kill my slurm job?","parameters":{"max_new_tokens":20}}' \
+    -d '{"inputs":"How can i cancel my slurm job?","parameters":{"max_new_tokens":100}}' \
     -H 'Content-Type: application/json'
 ```
 
 ### python requests
 
+Example script:
+```python
+import requests
+
+headers = {
+    "Content-Type": "application/json",
+}
+
+data = {
+    'inputs': 'How can i cancel my slurm job?',
+    'parameters': {
+        'max_new_tokens': 100,
+    },
+}
+
+response = requests.post('http://127.0.0.1:9090/generate', headers=headers, json=data)
+print(response.json())
+```
 
 --- 
 
