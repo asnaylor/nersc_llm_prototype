@@ -20,13 +20,17 @@ class Backend:
 
     def __init__(self, args) -> None:
         """Intialise the backend class."""
+        self.hf_home = self._get_hf_home(args.hf_home)
         pass
 
+    def _get_hf_home(self, hf_home):
+        """Get the HF_HOME dir."""
+        return os.getenv('HF_HOME', hf_home)
+
     @property
-    def _cmd(self) -> typing.List[str]:
+    def _cmd(self) -> None:
         """Generate the full command."""
-        cmd = ['ls']
-        return cmd
+        pass
     
     @property
     def _env(self) -> typing.Dict[str, str]:
@@ -52,15 +56,36 @@ class Backend:
 class vLLMBackend(Backend):
     """A class to deploy the vLLMBackend."""
     def __init__(self, args):
+        self.container_img = ''
         super().__init__(args)
+
+    @property
+    def _cmd(self) -> typing.List[str]:
+        """Generate the full command."""
+        cmd = ['ls']
+        return cmd
 
 
 class tritontrtllmBackend(Backend):
     """A class to deploy the tritontrtllmBackend."""
     def __init__(self, args):
+        self.container_img = ''
         super().__init__(args)
+
+    @property
+    def _cmd(self) -> typing.List[str]:
+        """Generate the full command."""
+        cmd = ['pwd']
+        return cmd
 
 class tgiBackend(Backend):
     """A class to deploy the tgiBackend."""
     def __init__(self, args):
+        self.container_img = 'ghcr.io/huggingface/text-generation-inference:1.4'
         super().__init__(args)
+
+    @property
+    def _cmd(self) -> typing.List[str]:
+        """Generate the full command."""
+        cmd = ['echo', self.hf_home]
+        return cmd

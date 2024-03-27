@@ -6,6 +6,7 @@ import sys
 
 from . import main
 from .backends import valid_backends
+from pathlib import Path
 
 _LOG_FMT = f"[{os.getpid()}] %(asctime)15s [%(levelname)7s] - %(name)s - %(message)s"
 _LOG_DATE_FMT = "%b %d %H:%M:%S"
@@ -42,8 +43,9 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("backend", choices=[backend.name for backend in valid_backends], help="Select valid backend")
 
     #optional
-    parser.add_argument("-v", "--verbose", action="count", default=1, help="increase output verbosity")
-    parser.add_argument("-q", "--quiet", action="count", default=0, help="decrease output verbosity")
+    parser.add_argument("--hf_home", action="store", default=f"{Path.home()}/.cache/huggingface", help="Set the HuggingFace home folder (%(default)s). Does not override $HF_HOME env.")
+    parser.add_argument("-v", "--verbose", action="count", default=1, help="Increase output verbosity")
+    parser.add_argument("-q", "--quiet", action="count", default=0, help="Decrease output verbosity")
 
     args = parser.parse_args()
 
