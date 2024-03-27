@@ -43,9 +43,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("backend", choices=[backend.name for backend in valid_backends], help="Select valid backend")
 
     #optional
-    parser.add_argument("--hf_home", action="store", default=f"{Path.home()}/.cache/huggingface", help="Set the HuggingFace home folder (%(default)s). Does not override $HF_HOME env.")
+    parser.add_argument("-p", "--port", action="store", default="8080", help="Set the port (%(default)s)")
+    
+    parser.add_argument("--model_id", action="store", default="meta-llama/Llama-2-7b-chat-hf", help="Provide the HuggingFace model (default %(default)s)")
+    parser.add_argument("--hf_home", action="store", default=f"{Path.home()}/.cache/huggingface", help="Set the HuggingFace home folder (default %(default)s). Does not override $HF_HOME env")
+    parser.add_argument("--hf_token", action="store", default=None, help="Set the HuggingFace token")
+    
     parser.add_argument("-v", "--verbose", action="count", default=1, help="Increase output verbosity")
     parser.add_argument("-q", "--quiet", action="count", default=0, help="Decrease output verbosity")
+    parser.add_argument("--force", action="store_true", default=False, help="Run backend on login node")
 
     args = parser.parse_args()
 
